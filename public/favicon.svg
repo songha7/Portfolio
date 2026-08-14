@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Matches the logo mark in the header: a gold ring with a solid centre.
+       An SVG favicon scales to every size and needs no PNG variants. -->
+  <rect width="32" height="32" rx="8" fill="#141312"/>
+  <circle cx="16" cy="16" r="9" fill="none" stroke="#e8b45c" stroke-opacity="0.55" stroke-width="1.5"/>
+  <circle cx="16" cy="16" r="3.5" fill="#e8b45c"/>
+</svg>

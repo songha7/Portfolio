@@ -1,0 +1,10 @@
+{
+  // Recommended extensions for this workspace. VS Code shows a prompt to
+  // install these the first time the project is opened.
+  //
+  // slevesque.shader: gives .glsl/.vert/.frag files real syntax highlighting.
+  // Without it, comments and code render in the same plain-text color, which
+  // makes heavily-commented shader files (like app/shaders/*.glsl) look like
+  // they're entirely commented out.
+  "recommendations": ["slevesque.shader"]
+}

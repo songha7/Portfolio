@@ -1,0 +1,12 @@
+{
+  // Nuxt generates the real TypeScript settings into .nuxt/ for you.
+  // This file just points at them, so you get autocomplete for auto-imports,
+  // `~/` path aliases, route names and runtime config without configuring anything.
+  "files": [],
+  "references": [
+    { "path": "./.nuxt/tsconfig.app.json" },
+    { "path": "./.nuxt/tsconfig.server.json" },
+    { "path": "./.nuxt/tsconfig.shared.json" },
+    { "path": "./.nuxt/tsconfig.node.json" }
+  ]
+}

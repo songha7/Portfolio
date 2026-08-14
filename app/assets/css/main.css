@@ -1,0 +1,449 @@
+/* ===========================================================================
+   main.css — the entire design system lives here.
+
+   Tailwind v4 is "CSS-first": there is no tailwind.config.js any more.
+   You configure Tailwind by writing CSS. The three directives that matter:
+
+     @import "tailwindcss"   -> pulls in Tailwind itself
+     @theme                  -> defines design tokens AND generates utilities
+     @custom-variant         -> defines a new variant like `dark:`
+
+   Colours are written in OKLCH — `oklch(lightness chroma hue)`.
+   Unlike hex, OKLCH is perceptually uniform: bumping the lightness by 0.05
+   looks like the same amount of change on every hue. That's why every modern
+   design system (including shadcn) moved to it.
+   =========================================================================== */
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Tell Tailwind that `dark:` means "somewhere inside an element with .dark".
+   @nuxtjs/color-mode puts that class on <html> for us. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   1. RAW TOKENS — the actual colour values, per theme.
+   These are plain CSS variables, so they can be animated and read from JS.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Corner radius scale is derived from this one number. */
+  --radius: 0.75rem;
+
+  /* --- LIGHT THEME: warm bone paper, espresso ink, gold accent --- */
+  --background: oklch(0.97 0.008 85); /* warm off-white */
+  --foreground: oklch(0.19 0.012 60); /* espresso */
+  --card: oklch(0.99 0.006 85);
+  --card-foreground: oklch(0.19 0.012 60);
+  --popover: oklch(0.99 0.006 85);
+  --popover-foreground: oklch(0.19 0.012 60);
+  --primary: oklch(0.24 0.014 60);
+  --primary-foreground: oklch(0.97 0.008 85);
+  --secondary: oklch(0.93 0.01 85);
+  --secondary-foreground: oklch(0.24 0.014 60);
+  --muted: oklch(0.93 0.01 85);
+  --muted-foreground: oklch(0.5 0.012 70);
+  --accent: oklch(0.92 0.02 80);
+  --accent-foreground: oklch(0.24 0.014 60);
+  --destructive: oklch(0.58 0.21 27);
+  --destructive-foreground: oklch(0.98 0.005 85);
+  --border: oklch(0.19 0.012 60 / 12%);
+  --input: oklch(0.19 0.012 60 / 16%);
+  --ring: oklch(0.72 0.14 75);
+
+  /* --- BRAND: the personality colours, shared by both themes --- */
+  --brand: oklch(0.76 0.15 75); /* gold */
+  --brand-soft: oklch(0.83 0.1 70); /* champagne */
+  --brand-deep: oklch(0.58 0.14 45); /* copper */
+  --brand-rose: oklch(0.68 0.15 20); /* terracotta rose */
+  --brand-cool: oklch(0.7 0.09 210); /* muted teal, used sparingly */
+
+  /* Surface layers for glass panels — kept separate from --card so we can
+     tune the "frosted" look without touching shadcn components. */
+  --surface: oklch(1 0 0 / 65%);
+  --surface-border: oklch(0.19 0.012 60 / 10%);
+  --grid-line: oklch(0.19 0.012 60 / 7%);
+}
+
+.dark {
+  /* --- DARK THEME: near-black warm charcoal, bone text, same gold --- */
+  --background: oklch(0.145 0.008 65);
+  --foreground: oklch(0.95 0.01 85);
+  --card: oklch(0.185 0.009 65);
+  --card-foreground: oklch(0.95 0.01 85);
+  --popover: oklch(0.17 0.009 65);
+  --popover-foreground: oklch(0.95 0.01 85);
+  --primary: oklch(0.95 0.01 85);
+  --primary-foreground: oklch(0.17 0.009 65);
+  --secondary: oklch(0.24 0.01 65);
+  --secondary-foreground: oklch(0.95 0.01 85);
+  --muted: oklch(0.24 0.01 65);
+  --muted-foreground: oklch(0.66 0.012 75);
+  --accent: oklch(0.27 0.014 70);
+  --accent-foreground: oklch(0.95 0.01 85);
+  --destructive: oklch(0.62 0.2 25);
+  --destructive-foreground: oklch(0.97 0.005 85);
+  --border: oklch(0.95 0.01 85 / 12%);
+  --input: oklch(0.95 0.01 85 / 16%);
+  --ring: oklch(0.76 0.15 75);
+
+  --brand: oklch(0.8 0.14 78);
+  --brand-soft: oklch(0.87 0.09 72);
+  --brand-deep: oklch(0.64 0.15 45);
+  --brand-rose: oklch(0.72 0.14 22);
+  --brand-cool: oklch(0.74 0.09 210);
+
+  --surface: oklch(0.95 0.01 85 / 4%);
+  --surface-border: oklch(0.95 0.01 85 / 9%);
+  --grid-line: oklch(0.95 0.01 85 / 6%);
+}
+
+/* ---------------------------------------------------------------------------
+   2. @theme inline — turn the tokens above into Tailwind utilities.
+
+   Writing `--color-background: var(--background)` makes `bg-background`,
+   `text-background`, `border-background`, etc. exist. `inline` means Tailwind
+   substitutes the var() reference rather than copying the value, so the
+   utilities keep responding to theme changes at runtime.
+   --------------------------------------------------------------------------- */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand utilities: text-brand, bg-brand-rose, from-brand-deep, ... */
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-rose: var(--brand-rose);
+  --color-brand-cool: var(--brand-cool);
+  --color-surface: var(--surface);
+  --color-surface-border: var(--surface-border);
+
+  /* Radius scale used by shadcn components (rounded-sm ... rounded-xl). */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 12px);
+
+  /* Typography: font-sans / font-serif / font-mono */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* Custom easing curves, available as ease-out-expo etc. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Keyframe animations exposed as animate-* utilities. */
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 40s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-scroll-hint: scroll-hint 2s var(--ease-out-expo) infinite;
+  --animate-blink: blink 1.1s steps(2, start) infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes marquee-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes scroll-hint {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    35% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(14px);
+      opacity: 0;
+    }
+  }
+  @keyframes blink {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   3. BASE LAYER — sensible global defaults.
+   --------------------------------------------------------------------------- */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* Lenis drives scrolling with JS, so the native smooth behaviour must be off
+       or the two fight each other and scrolling feels rubbery. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Prevents a horizontal scrollbar when an element is rotated or translated
+       slightly off-screen (we do that a lot in the skewed marquee sections). */
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Nicer default heading rhythm. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Text selection picks up the brand colour. */
+  ::selection {
+    background: var(--brand);
+    color: oklch(0.16 0.01 65);
+  }
+
+  /* Slim custom scrollbar (WebKit) so the page doesn't get a chunky grey bar. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--foreground) 18%, transparent);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklch, var(--foreground) 30%, transparent);
+    background-clip: content-box;
+  }
+
+  /* Keyboard focus stays visible and on-brand — never remove focus outlines. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* ACCESSIBILITY: if the visitor asked their OS to reduce motion, we honour it.
+     The JS side checks the same media query before starting GSAP timelines. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. CUSTOM UTILITIES — reusable classes for the "premium" look.
+   `@utility` is the Tailwind v4 way to add your own utility class.
+   --------------------------------------------------------------------------- */
+
+/* Frosted glass panel. */
+@utility glass {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+}
+
+/* Gradient text using the brand ramp. */
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--brand-soft) 0%,
+    var(--brand) 35%,
+    var(--brand-rose) 70%,
+    var(--brand-deep) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  /* Descenders (g, y, p) get clipped without a little breathing room. */
+  padding-bottom: 0.08em;
+}
+
+/* A subtle animated sheen that sweeps across text or a border. */
+@utility shimmer {
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in oklch, var(--brand) 55%, transparent) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Hairline grid background, like technical drawing paper. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Radial fade mask — makes a background element dissolve at the edges. */
+@utility mask-radial-fade {
+  -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 72%);
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 72%);
+}
+
+/* Fade an overflowing row out at both ends (used by marquees). */
+@utility mask-edges {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* Turns on GPU compositing and 3D perspective for children. */
+@utility preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+@utility perspective-2000 {
+  perspective: 2000px;
+}
+
+/* Hides an element from sight but keeps it readable by screen readers. */
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  &:focus-visible {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    z-index: 100;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5. PAGE TRANSITIONS + FILM GRAIN
+   --------------------------------------------------------------------------- */
+
+/* Matches `pageTransition: { name: 'page' }` in nuxt.config.ts */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.4s var(--ease-out-expo),
+    filter 0.4s var(--ease-out-expo),
+    transform 0.4s var(--ease-out-expo);
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(12px);
+}
+
+/* Static film grain overlay. An inline SVG turbulence filter, so it costs
+   zero network requests and scales to any screen. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.38'/%3E%3C/svg%3E");
+}
+
+/* The theme toggle uses the View Transitions API for a circular wipe.
+   These rules stop the browser's default cross-fade so our clip-path wins. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* While the preloader is on screen we lock scrolling. */
+html.is-loading,
+html.is-loading body {
+  overflow: hidden !important;
+  height: 100%;
+}
