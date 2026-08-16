@@ -92,7 +92,14 @@ export default defineNuxtConfig({
         },
       ],
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        // `viewport-fit=cover` lets the page draw into the notch / rounded
+        // corners instead of being letterboxed by iOS. It is also what makes
+        // `env(safe-area-inset-*)` report real numbers — without it every
+        // inset is 0 and the safe-area CSS in main.css silently does nothing.
+        {
+          name: 'viewport',
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover',
+        },
         { name: 'theme-color', content: '#0a0a0b' },
       ],
     },

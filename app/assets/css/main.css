@@ -58,6 +58,22 @@
   --brand-rose: oklch(0.68 0.15 20); /* terracotta rose */
   --brand-cool: oklch(0.7 0.09 210); /* muted teal, used sparingly */
 
+  /**
+   * --brand-ink: the gold used for TEXT, as opposed to --brand which is tuned
+   * for fills, borders and glows.
+   *
+   * They have to be two different values because they are judged against
+   * opposite backgrounds. `bg-brand` puts near-black text ON the gold, so the
+   * gold must stay LIGHT for that to read. Gold text sits on the bone page
+   * background, so it must be DARK to read. One value cannot do both — darken
+   * --brand to fix the text and the solid gold button goes muddy.
+   *
+   * Measured against the light background oklch(0.97 0.008 85):
+   *   --brand      #e8a127   2.01:1  — fails WCAG AA badly
+   *   --brand-ink  #a75600   4.83:1  — passes AA for body text (needs 4.5:1)
+   */
+  --brand-ink: oklch(0.54 0.14 60);
+
   /* Surface layers for glass panels — kept separate from --card so we can
      tune the "frosted" look without touching shadcn components. */
   --surface: oklch(1 0 0 / 65%);
@@ -92,6 +108,12 @@
   --brand-deep: oklch(0.64 0.15 45);
   --brand-rose: oklch(0.72 0.14 22);
   --brand-cool: oklch(0.74 0.09 210);
+
+  /* Dark theme needs no separate ink value: the same gold measures 10.44:1
+     against the near-black background, which is comfortably past AA. Keeping
+     the token defined (rather than letting it inherit the light value) is what
+     stops dark mode from picking up the much darker light-theme brown. */
+  --brand-ink: oklch(0.8 0.14 78);
 
   --surface: oklch(0.95 0.01 85 / 4%);
   --surface-border: oklch(0.95 0.01 85 / 9%);
@@ -130,6 +152,7 @@
 
   /* Brand utilities: text-brand, bg-brand-rose, from-brand-deep, ... */
   --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
   --color-brand-soft: var(--brand-soft);
   --color-brand-deep: var(--brand-deep);
   --color-brand-rose: var(--brand-rose);
@@ -446,4 +469,152 @@ html.is-loading,
 html.is-loading body {
   overflow: hidden !important;
   height: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   6. TOUCH DEVICES + NOTCHED SCREENS
+
+   Most of the responsive work is done with Tailwind's breakpoints inline in the
+   components. What lives here is the handful of things a breakpoint cannot
+   express: physical screen cutouts, touch ergonomics, and iOS-specific
+   behaviour.
+
+   Worth knowing what is ALREADY handled elsewhere, so you don't add it twice:
+     • `hover:` — Tailwind v4 compiles it inside `@media (hover: hover)`, so
+       hover styles never stick on a phone after a tap. This was a real problem
+       in v3 and is why you may see `@media (hover: hover)` wrappers in older
+       codebases.
+     • Input zoom — iOS zooms the page when you focus a field whose text is
+       under 16px. The shadcn inputs are `text-base` (16px) and only drop to
+       `text-sm` at `md:`, which is desktop. Do not "tidy" that to text-sm.
+     • Pinned-section jump — the address bar hiding fires a resize mid-scroll.
+       `ScrollTrigger.config({ ignoreMobileResize: true })` in plugins/gsap.
+   --------------------------------------------------------------------------- */
+
+html {
+  /* iOS flashes a translucent grey box over anything tappable. It fires on
+     every link and button and makes an otherwise considered page feel cheap.
+     Focus rings are untouched — :focus-visible above still draws them. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/**
+ * SAFE AREA — the space the hardware physically occupies.
+ *
+ * `env(safe-area-inset-*)` is 0 on a normal screen and non-zero where the
+ * display is interrupted: the notch / Dynamic Island, the rounded corners, and
+ * the home indicator bar at the bottom. It only reports real values because
+ * nuxt.config sets `viewport-fit=cover` on the viewport meta.
+ *
+ * In PORTRAIT the top inset is handled by the browser chrome, so the one that
+ * bites is the BOTTOM — a fixed CTA sits underneath the home indicator and
+ * reads as clipped. In LANDSCAPE the notch eats one whole side, so text runs
+ * under it unless the horizontal gutter accounts for it.
+ */
+
+/* The standard page gutter, notch-aware. Mirrors `px-5 sm:px-8 lg:px-12`
+   exactly, but never lets content sit closer to the edge than the hardware
+   allows. `max()` means the inset only wins when it is larger than the design
+   padding — on a device with no cutout the numbers are unchanged. */
+@utility gutter {
+  padding-inline: max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right));
+
+  @variant sm {
+    padding-inline: max(2rem, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  @variant lg {
+    padding-inline: max(3rem, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+}
+
+/* Adds the home-indicator inset ON TOP of whatever bottom padding is already
+   there, rather than replacing it — so spacing still looks right on a device
+   with no indicator, where the inset resolves to 0. */
+@utility pb-safe {
+  padding-bottom: calc(var(--pb-safe, 0px) + env(safe-area-inset-bottom));
+}
+
+/**
+ * A 44×44px touch area, without changing how the control LOOKS.
+ *
+ * Apple's guidance is 44pt minimum; our icon buttons are 36px because that is
+ * the right visual weight next to 14px text. Rather than inflate them on
+ * mobile and unbalance the header, an invisible pseudo-element centred on the
+ * button extends only the HIT region. Nothing moves, nothing reflows — the
+ * finger just stops missing.
+ *
+ * Only applied to coarse pointers: on a mouse a 36px target is already easy,
+ * and an oversized invisible box would steal hovers from its neighbours.
+ */
+@utility tap-target {
+  position: relative;
+
+  @media (pointer: coarse) {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 44px;
+      height: 44px;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+/**
+ * GOLD TEXT ON SMALL SCREENS
+ *
+ * Below the `md` breakpoint, anything using `text-brand` switches to the
+ * higher-contrast --brand-ink. Two reasons this matters more on a phone:
+ * the gold is mostly used on small labels and eyebrows (10–11px mono), and
+ * phones get read outdoors where screen glare eats low-contrast text.
+ *
+ * Only the TEXT colour changes. `bg-brand`, `border-brand` and every gradient
+ * still use the original gold, so the page keeps its identity — this reads as
+ * the same design adapting, not a different palette.
+ *
+ * WHY THIS OVERRIDE WINS: Tailwind puts its utilities inside `@layer
+ * utilities`, and any rule that is NOT in a layer beats every layered rule
+ * regardless of specificity. That is a cascade rule people are often surprised
+ * by, and it is the whole reason this plain `.text-brand` block works without
+ * !important or a doubled-up selector.
+ *
+ * NOTE: the same 2.01:1 contrast failure exists on desktop in the light theme.
+ * Deleting the media query here — so --brand-ink applies at every width — is
+ * the accessible choice; it is scoped to mobile only because that is what was
+ * asked for.
+ */
+@media (width < 48rem) {
+  .text-brand {
+    color: var(--brand-ink);
+  }
+
+  /**
+   * The faded variants need the same treatment, and they are easy to miss:
+   * `text-brand/60` is what the numbers in the MOBILE MENU use, so it is gold
+   * text at 60% opacity — on a background where the solid version already only
+   * manages 2.01:1. Fading it makes a failing colour worse.
+   *
+   * These mirror exactly what Tailwind generates for an opacity modifier
+   * (`color-mix(in oklab, <colour> N%, transparent)`), with --brand-ink
+   * swapped in. They are listed one by one because each modifier compiles to
+   * its own class — if you add a new one in a template, e.g. `text-brand/40`,
+   * add the matching line here or it will keep the low-contrast gold.
+   */
+  .text-brand\/50 {
+    color: color-mix(in oklab, var(--brand-ink) 50%, transparent);
+  }
+  .text-brand\/60 {
+    color: color-mix(in oklab, var(--brand-ink) 60%, transparent);
+  }
+  .text-brand\/70 {
+    color: color-mix(in oklab, var(--brand-ink) 70%, transparent);
+  }
+  .text-brand\/80 {
+    color: color-mix(in oklab, var(--brand-ink) 80%, transparent);
+  }
+  .text-brand\/90 {
+    color: color-mix(in oklab, var(--brand-ink) 90%, transparent);
+  }
 }

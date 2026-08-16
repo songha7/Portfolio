@@ -82,8 +82,11 @@ watch(() => useRoute().fullPath, () => (mobileOpen.value = false))
       class="transition-all duration-500"
       :class="isScrolled ? 'glass border-b' : 'border-b border-transparent'"
     >
+      <!-- `gutter` instead of px-5/sm:px-8/lg:px-12: identical spacing, but it
+           also clears the notch when an iPhone is held in landscape, where the
+           camera housing overlaps one end of the bar. -->
       <nav
-        class="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 sm:px-8 lg:px-12"
+        class="gutter mx-auto flex h-16 max-w-[1400px] items-center justify-between"
         aria-label="Main"
       >
         <!-- ---------------------------------------------------------- logo -->
@@ -149,10 +152,12 @@ watch(() => useRoute().fullPath, () => (mobileOpen.value = false))
           <ThemeToggle />
 
           <!-- Mobile menu button -->
+          <!-- `tap-target` keeps the 36px look but gives the finger a 44px
+               hit area on touch screens. See the utility in main.css. -->
           <Button
             variant="ghost"
             size="icon"
-            class="rounded-full md:hidden"
+            class="tap-target rounded-full md:hidden"
             :aria-expanded="mobileOpen"
             aria-controls="mobile-menu"
             :aria-label="mobileOpen ? 'Close menu' : 'Open menu'"
@@ -194,12 +199,17 @@ watch(() => useRoute().fullPath, () => (mobileOpen.value = false))
 
           z-40 keeps it below the header (z-50) so the close button stays on top.
         -->
+        <!--
+          `overscroll-contain` matters on iOS: without it, scrolling to the end
+          of this panel hands the gesture on to the page behind, which then
+          scrolls under the overlay. The menu is meant to be a dead end.
+        -->
         <div
           v-if="mobileOpen"
           id="mobile-menu"
-          class="bg-background/98 fixed inset-x-0 top-16 bottom-0 z-40 overflow-y-auto border-t backdrop-blur-2xl md:hidden"
+          class="bg-background/98 fixed inset-x-0 top-16 bottom-0 z-40 overflow-y-auto overscroll-contain border-t backdrop-blur-2xl md:hidden"
         >
-          <ul class="flex flex-col gap-2 px-6 py-10">
+          <ul class="gutter flex flex-col gap-2 py-10">
             <li
               v-for="(link, i) in navLinks"
               :key="link.to"
@@ -218,7 +228,11 @@ watch(() => useRoute().fullPath, () => (mobileOpen.value = false))
             </li>
           </ul>
 
-          <div class="px-6 pb-10">
+          <!-- The one place the home indicator really bites: a full-width CTA
+               pinned near the bottom of the screen ends up with the indicator
+               bar sitting across it. `pb-safe` adds the inset on top of the
+               2.5rem design padding, and resolves to just 2.5rem elsewhere. -->
+          <div class="gutter pb-safe" style="--pb-safe: 2.5rem">
             <Button
               variant="brand"
               size="pill"

@@ -86,7 +86,8 @@ const linkIcons: Record<string, Component> = {
           <Badge v-for="tag in project.tags" :key="tag" variant="tech">{{ tag }}</Badge>
         </div>
 
-        <h1 class="mt-6 font-serif text-[clamp(2.5rem,8vw,6.5rem)] leading-[0.9] tracking-[-0.03em]">
+        <!-- Mobile-first metrics — see the note on the h1 in HeroSection.vue. -->
+        <h1 class="mt-6 font-serif text-[clamp(2.5rem,8vw,6.5rem)] leading-[1.04] tracking-[-0.01em] sm:leading-[0.9] sm:tracking-[-0.03em]">
           {{ project.title }}
         </h1>
 

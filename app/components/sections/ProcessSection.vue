@@ -117,7 +117,8 @@ useGsapContext(root, () => {
             <div class="grid gap-8 lg:grid-cols-12 lg:gap-16">
               <div class="lg:col-span-4">
                 <span class="text-brand/80 font-mono text-sm tracking-[0.3em]">{{ step.n }}</span>
-                <h3 class="mt-4 font-serif text-[clamp(2rem,4.5vw,3.5rem)] leading-none tracking-tight">
+                <!-- Mobile-first metrics — see the note in HeroSection.vue. -->
+                <h3 class="mt-4 font-serif text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.12] tracking-normal sm:leading-none sm:tracking-tight">
                   {{ step.title }}
                 </h3>
               </div>

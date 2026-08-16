@@ -22,6 +22,22 @@ useSeoMeta({
   twitterTitle: seo.title,
   twitterDescription: seo.description,
 })
+
+/**
+ * Toast placement.
+ *
+ * Bottom-right is right on a wide screen — it stays out of the reading column.
+ * On a phone there is no "right": the toast spans almost the full width anyway,
+ * so anchoring it to a corner just looks off-centre. Bottom-centre reads as
+ * deliberate, and sits where the thumb already is.
+ *
+ * `useMediaQuery` is SSR-safe (false on the server, correct after hydration),
+ * which matters because this renders inside the server-rendered shell.
+ */
+const isMobile = useMediaQuery('(max-width: 639px)')
+const toastPosition = computed(() =>
+  isMobile.value ? ('bottom-center' as const) : ('bottom-right' as const),
+)
 </script>
 
 <template>
@@ -48,6 +64,13 @@ useSeoMeta({
 
     <!-- Toast host. It must live at the root so a toast fired from any page
          survives navigation and is never clipped by a parent's overflow. -->
-    <Toaster position="bottom-right" :duration="4500" close-button />
+    <!-- `offset` lifts the stack clear of the iPhone home indicator; on a
+         device without one the inset is 0 and this is the plain 16px. -->
+    <Toaster
+      :position="toastPosition"
+      :duration="4500"
+      :offset="'calc(1rem + env(safe-area-inset-bottom))'"
+      close-button
+    />
   </div>
 </template>

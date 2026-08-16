@@ -193,8 +193,15 @@ onUnmounted(() => introCtx?.revert())
       </div>
 
       <!-- Name. Two lines, tightly leaded, mixing upright serif with italic so
-           it reads as editorial rather than as a default h1. -->
-      <h1 class="hero-title font-serif leading-[0.85] tracking-[-0.03em]">
+           it reads as editorial rather than as a default h1.
+
+           The leading/tracking are written MOBILE-FIRST, then tightened from
+           `sm:` up. 0.85 leading is right at the 112px this reaches on a
+           desktop — the lines interlock and read as one block. At the 38px it
+           falls back to on a phone the same ratio puts the descenders of line
+           one into the ascenders of line two, and -0.03em tracking makes the
+           letters touch. Same face, same design, metrics that suit the size. -->
+      <h1 class="hero-title font-serif leading-[1.02] tracking-[-0.01em] sm:leading-[0.85] sm:tracking-[-0.03em]">
         <SplitText
           :text="profile.role"
           class="hero-anim block text-[clamp(2.4rem,8vw,7rem)]"

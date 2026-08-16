@@ -18,7 +18,8 @@ useSeoMeta({ title: 'Page not found', robots: 'noindex' })
 </script>
 
 <template>
-  <div class="bg-background text-foreground relative flex min-h-screen items-center overflow-hidden">
+  <!-- min-h-dvh, not min-h-screen — see the note in layouts/default.vue. -->
+  <div class="bg-background text-foreground relative flex min-h-dvh items-center overflow-hidden">
     <!-- Same visual language as the hero, so a 404 still feels like the site. -->
     <div class="bg-grid mask-radial-fade absolute inset-0 opacity-50" aria-hidden="true" />
     <div
@@ -27,12 +28,15 @@ useSeoMeta({ title: 'Page not found', robots: 'noindex' })
       style="background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--brand) 10%, transparent), transparent 70%)"
     />
 
-    <div class="relative mx-auto w-full max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="gutter relative mx-auto w-full max-w-[1400px]">
       <p class="text-brand font-mono text-[11px] tracking-[0.3em] uppercase">
         Error {{ error?.statusCode ?? 500 }}
       </p>
 
-      <h1 class="mt-6 font-serif text-[clamp(3rem,12vw,9rem)] leading-[0.85] tracking-[-0.04em]">
+      <!-- Mobile-first metrics — see the note on the h1 in HeroSection.vue.
+           This is the tightest heading on the site (-0.04em), so it is also
+           the one that suffers most at phone sizes. -->
+      <h1 class="mt-6 font-serif text-[clamp(3rem,12vw,9rem)] leading-none tracking-[-0.015em] sm:leading-[0.85] sm:tracking-[-0.04em]">
         Nothing<br >
         <em class="text-gradient not-italic italic">here.</em>
       </h1>

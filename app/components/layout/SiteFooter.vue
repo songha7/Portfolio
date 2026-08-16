@@ -31,7 +31,9 @@ onMounted(() => {
       </p>
     </div>
 
-    <div class="relative mx-auto max-w-[1400px] px-5 py-16 sm:px-8 lg:px-12">
+    <!-- gutter + pb-safe: notch-aware sides, and the last thing on the page
+         clears the home indicator instead of tucking under it. -->
+    <div class="gutter pb-safe relative mx-auto max-w-[1400px] pt-16" style="--pb-safe: 4rem">
       <div class="flex flex-col gap-12 md:flex-row md:justify-between">
         <!-- Left: availability + email -->
         <div class="max-w-sm">
