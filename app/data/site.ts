@@ -22,11 +22,11 @@ import type {
 /* ---------------------------------------------------------------- identity */
 
 export const profile = {
-  name: 'Asuna',
+  name: 'Sros Songha',
   /** Shown in the hero as two stacked lines. */
-  firstName: 'Asu',
-  lastName: 'na',
-  role: 'Full-stack Engineer',
+  firstName: 'Sros',
+  lastName: 'Songha',
+  role: 'Software Engineering',
   /** The one-liner under the big name. */
   tagline: 'I build interfaces that feel alive.',
   /** Two or three sentences for the About section. */

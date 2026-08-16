@@ -36,6 +36,9 @@ const isActive = ref(false)
  */
 const canHover = ref(false)
 
+/** Teardown for the listeners bound below; see the note by `onUnmounted`. */
+let cleanup: (() => void) | null = null
+
 onMounted(() => {
   canHover.value = window.matchMedia('(hover: hover) and (pointer: fine)').matches
   if (!canHover.value) return
@@ -75,13 +78,29 @@ onMounted(() => {
     document.addEventListener('pointerleave', onLeave)
     document.addEventListener('pointerenter', onEnter)
 
-    onUnmounted(() => {
+    // Store the teardown for the onUnmounted registered at setup scope below.
+    cleanup = () => {
       window.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointerleave', onLeave)
       document.removeEventListener('pointerenter', onEnter)
-    })
+    }
   })
 })
+
+/**
+ * Cleanup MUST be registered here, at setup scope — not inside the `nextTick`
+ * callback above.
+ *
+ * Vue only knows which component a lifecycle hook belongs to while `setup()` is
+ * running (and inside a lifecycle hook, which it wraps to restore that
+ * context). A `nextTick` callback runs after both, so `getCurrentInstance()` is
+ * null there and `onUnmounted` silently does nothing — it just logs
+ * "onUnmounted is called when there is no active component instance".
+ *
+ * The consequence was a real leak: these listeners stayed bound to `window` and
+ * `document` after navigating away, holding the whole component alive.
+ */
+onUnmounted(() => cleanup?.())
 </script>
 
 <template>

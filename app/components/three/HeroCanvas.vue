@@ -60,8 +60,9 @@ onMounted(() => {
  * screen is pure waste — it drains battery and steals frames from the scroll
  * animations that ARE visible.
  *
- * `render-mode="manual"` tells TresJS to stop drawing until told otherwise, so
- * we flip it based on whether the canvas is actually in the viewport.
+ * `isVisible` is handed to <SceneRenderGate> inside the canvas, which pauses
+ * and resumes the render loop. See that component for why we do NOT do this by
+ * toggling the `render-mode` prop — that approach freezes the scene forever.
  */
 const isVisible = ref(true)
 useIntersectionObserver(
@@ -69,8 +70,6 @@ useIntersectionObserver(
   ([entry]) => (isVisible.value = entry?.isIntersecting ?? true),
   { threshold: 0 },
 )
-
-const renderMode = computed(() => (isVisible.value ? 'always' : 'manual'))
 
 /* --------------------------------------------------------------- capability */
 /**
@@ -144,6 +143,26 @@ const palette = computed(() =>
     ? { low: '#7d4f14', high: '#e0a94f', rim: '#583409', particles: '#8a6224' }
     : { low: '#4a2f0e', high: '#f2c377', rim: '#ffe6b8', particles: '#e8c27a' },
 )
+
+/* -------------------------------------------------------------- ring images */
+/**
+ * The photos on the orbiting ring, declared as a CONSTANT rather than written
+ * inline as :images="[...]" in the template.
+ *
+ * THIS IS NOT A STYLE PREFERENCE — the inline form crashes the page.
+ * A `[...]` literal in a template is re-evaluated on every render, so the child
+ * receives a brand-new array *reference* each time even though the contents are
+ * identical. This component re-renders on every mouse move (the `pointer`
+ * computed above updates from useMouse), and AlbumRing watches `images` to know
+ * when to rebuild. The result is a full teardown and re-upload of every panel's
+ * geometry and texture, dozens of times a second, until the GPU process dies.
+ *
+ * Declared out here the reference never changes, so the watcher stays quiet.
+ */
+const ringImages = [
+  '/images/IMG_0735.JPG',
+  '/images/kamisato-ayaka-5k-3840x2160-23010.jpg',
+]
 </script>
 
 <template>
@@ -156,9 +175,12 @@ const palette = computed(() =>
       clear-color="#000000"
       :clear-alpha="0"
       power-preference="high-performance"
-      :render-mode="renderMode"
+      render-mode="always"
       class="!absolute inset-0"
     >
+      <!-- Pauses the render loop when the hero scrolls out of view. Must be
+           inside the canvas — it reads the renderer context via inject. -->
+      <SceneRenderGate :active="isVisible" />
       <!-- A narrow field of view (40°) is the 3D equivalent of a portrait lens:
            less perspective distortion, everything reads as more premium.
            Wide angles (75°+) look like a GoPro. -->
@@ -173,6 +195,34 @@ const palette = computed(() =>
         :color-low="palette.low"
         :color-high="palette.high"
         :color-rim="palette.rim"
+      />
+
+      <!--
+        Curved image panels orbiting the blob. Given the same offsets and
+        scroll value as NoiseBlob so the two move as one object.
+
+        Real photos live in public/images/ and repeat around the 9 panels
+        (props.images[i % props.images.length] in AlbumRing.vue), so two
+        images is enough to fill the whole ring.
+
+        DESKTOP ONLY. On a phone the blob is deliberately pushed to the very top
+        of the viewport to keep the headline readable, and the ring inherits
+        that offset — so it lands half off-screen and cuts across the header.
+        A clipped band of photos behind the nav looks like a bug, so below
+        768px the blob carries the hero on its own.
+      -->
+      <AlbumRing
+        v-if="!isMobile"
+        :pointer="pointer"
+        :scroll="scrollProgress"
+        :offset-x="blobOffsetX"
+        :offset-y="blobOffsetY"
+        :size-scale="blobScale"
+        :radius="1.9"
+        :count="9"
+        :height="0.74"
+        :gap="5"
+        :images="ringImages"
       />
 
       <ParticleField

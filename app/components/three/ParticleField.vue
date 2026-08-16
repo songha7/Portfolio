@@ -125,11 +125,24 @@ watch(() => props.size, (s) => (uniforms.uSize.value = s))
 
 const { onBeforeRender } = useLoop()
 
-onBeforeRender(({ delta, elapsed }) => {
-  uniforms.uTime.value = elapsed
+/**
+ * Our own clock rather than the loop's `elapsed`.
+ *
+ * SceneRenderGate pauses the render loop when the hero scrolls away, and
+ * `THREE.Timer` does not clamp its delta — so `elapsed` jumps by the entire
+ * pause duration on the first frame back, and every particle teleports.
+ * Accumulating a clamped delta keeps the drift continuous across a pause.
+ */
+let clock = 0
+
+onBeforeRender(({ delta }) => {
+  // Cap at one 30fps frame. See the fuller explanation in NoiseBlob.vue.
+  const dt = Math.min(delta, 1 / 30)
+  clock += dt
+  uniforms.uTime.value = clock
 
   // Ease the pointer towards its target (frame-rate independent, see NoiseBlob).
-  const ease = 1 - Math.exp(-2.5 * delta)
+  const ease = 1 - Math.exp(-2.5 * dt)
   uniforms.uMouse.value.x += (props.pointer.x - uniforms.uMouse.value.x) * ease
   uniforms.uMouse.value.y += (props.pointer.y - uniforms.uMouse.value.y) * ease
 
@@ -137,7 +150,7 @@ onBeforeRender(({ delta, elapsed }) => {
   if (!points) return
   // The whole field counter-rotates slowly against the blob, and drifts as you
   // scroll — a cheap way to make the depth readable.
-  points.rotation.y = -elapsed * 0.02
+  points.rotation.y = -clock * 0.02
   points.position.y = props.scroll * 3
 })
 

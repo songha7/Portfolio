@@ -149,6 +149,30 @@ onUnmounted(() => introCtx?.revert())
       style="background: linear-gradient(to bottom, transparent 12%, color-mix(in oklch, var(--background) 82%, transparent) 32%, var(--background) 52%)"
     />
 
+    <!--
+      Desktop: a left-to-right scrim guaranteeing the headline always sits on
+      clean background, whatever the 3D happens to be doing behind it.
+
+      The album ring orbits, so the bright side of it sweeps across the text
+      zone once per revolution — tuning the ring's radius can reduce that but
+      never rules it out. A scrim makes legibility structural instead of a
+      lucky coincidence. It also doubles as atmospheric perspective: the far
+      side of the ring dims, which reads as depth rather than as a mask.
+    -->
+    <div
+      class="pointer-events-none absolute inset-0 hidden md:block"
+      aria-hidden="true"
+      style="
+        background: linear-gradient(
+          100deg,
+          var(--background) 0%,
+          var(--background) 26%,
+          color-mix(in oklch, var(--background) 72%, transparent) 46%,
+          transparent 68%
+        );
+      "
+    />
+
     <!-- ------------------------------------------------------------ text -->
     <!-- pt clears the fixed header; pb leaves room for the scroll hint.
          Keeping the total under 100svh on a laptop is the whole reason the

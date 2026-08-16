@@ -115,6 +115,14 @@ Each word sits in an `overflow: hidden` box; the letters animate from
 Two traps are documented in that file — both of them silently delete the spaces
 between your words.
 
+**Curving an image around a sphere** — `components/three/AlbumRing.vue`
+The album panels orbiting the hero blob are not flat billboards. Each one is a
+slice of a cylinder wall — `CylinderGeometry(r, r, h, seg, 1, true, thetaStart,
+thetaLength)` with `openEnded: true` to drop the caps — so the image is bent
+along the same radius as the ball and reads as wrapped around it. Three's UVs
+run 0..1 across whatever arc you ask for, so the texture fits with no manual UV
+work.
+
 **A vertex shader is just maths per point** — `shaders/blob.vert.glsl`
 Simplex noise decides how far to push each of ~40,000 vertices along its radius.
 The surface normal is then recalculated by sampling two neighbouring points —
@@ -170,6 +178,18 @@ The fastest way to learn this codebase is to break it.
   update `socials` in `app/data/site.ts`.
 - **The "portrait" is a CSS gradient**, not a photo. Drop a real image into
   `AboutSection.vue`; the `TiltCard` wrapper works the same either way.
+- **The album ring uses generated placeholder tiles**, drawn from each project's
+  accent colours, because there are no photos in the repo yet. To use real ones,
+  put files in `public/album/` and pass them in `HeroCanvas.vue`:
+
+  ```
+  <AlbumRing :images="['/album/one.jpg', '/album/two.jpg']" ... />
+  ```
+
+  Fewer images than `count` is fine — they repeat around the ring. Landscape
+  crops around 3:2 fit the panels best. The ring is hidden below 768px, where
+  the blob sits at the top of the viewport and a band of photos would cut
+  across the header.
 - **The numbers in `profile.stats` and `project.metrics` are placeholders.**
   Change them to real ones or delete them — invented metrics are the fastest way
   to lose a reader's trust.

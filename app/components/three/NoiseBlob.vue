@@ -137,18 +137,34 @@ let clock = 0
  */
 const { onBeforeRender } = useLoop()
 
-onBeforeRender(({ delta, elapsed }) => {
+onBeforeRender(({ delta }) => {
   const mesh = meshRef.value
   if (!mesh) return
 
+  /**
+   * CLAMP THE DELTA. This is not optional here.
+   *
+   * SceneRenderGate pauses the loop while the hero is off screen, and
+   * `THREE.Timer` does not bound its delta:
+   *     this._delta = ( this._currentTime - this._previousTime ) * this._timescale
+   * So the first frame after a 20-second pause arrives with `delta ≈ 20`.
+   * Feeding that into the clock below would advance the noise field by 20
+   * seconds in a single frame — the blob visibly teleports into a different
+   * shape the instant you scroll back to it.
+   *
+   * Capping at one 30fps frame means a resume is seamless, and a genuinely
+   * slow frame just animates slightly slower rather than lurching.
+   */
+  const dt = Math.min(delta, 1 / 30)
+
   // Drive the shader's clock (see the note on `clock` above).
-  clock += delta * props.speed
+  clock += dt * props.speed
   uniforms.uTime.value = clock
 
-  // Ease the pointer influence. `1 - exp(-k * delta)` is a frame-rate
+  // Ease the pointer influence. `1 - exp(-k * dt)` is a frame-rate
   // independent version of the usual lerp factor — it behaves identically at
   // 30fps and 144fps, which a plain `lerp(a, b, 0.1)` does not.
-  const ease = 1 - Math.exp(-4 * delta)
+  const ease = 1 - Math.exp(-4 * dt)
   smoothX += (props.pointer.x - smoothX) * ease
   smoothY += (props.pointer.y - smoothY) * ease
 
@@ -158,7 +174,10 @@ onBeforeRender(({ delta, elapsed }) => {
   uniforms.uMouseInfluence.value = smoothInfluence
 
   // Slow constant rotation, plus a tilt that follows the cursor.
-  mesh.rotation.y = elapsed * 0.12 + smoothX * 0.4
+  // Uses our own `clock` rather than the loop's `elapsed` for the same reason
+  // as above: `elapsed` accumulates that one huge unclamped delta after a
+  // pause, so the blob would snap to a new rotation on resume.
+  mesh.rotation.y = clock * 0.12 + smoothX * 0.4
   mesh.rotation.x = smoothY * 0.3
   // Scroll pushes the blob back and spins it — this is what ties the 3D to the
   // page instead of leaving it as an unrelated decoration.

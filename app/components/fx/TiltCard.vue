@@ -28,6 +28,24 @@ interface Props {
   glare?: boolean
   /** Perspective distance on the wrapper. Smaller = more extreme. */
   perspective?: number
+  /**
+   * Seconds the card takes to catch up to the pointer.
+   *
+   * This is the "weight" dial. Because `quickTo` retargets a running tween on
+   * every mouse move, a SHORT duration means the card tracks your cursor almost
+   * 1:1 and feels twitchy; a LONGER one makes it lag slightly behind and read as
+   * a heavy physical object. Below ~0.6 it starts to flick.
+   */
+  smoothing?: number
+  /**
+   * Seconds of hovering before the tilt reaches full strength.
+   *
+   * This is what separates an accidental brush from a deliberate hover. The
+   * effect is scaled by a value ramping 0 -> 1 over this window, so clipping
+   * the edge of the card in passing barely moves it, while resting on it gives
+   * the full effect. Set to 0 to react instantly to any contact.
+   */
+  engage?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,6 +53,10 @@ const props = withDefaults(defineProps<Props>(), {
   lift: 24,
   glare: true,
   perspective: 1000,
+  // With the engagement ramp below absorbing accidental contact, the follow
+  // itself can stay reasonably responsive for a deliberate hover.
+  smoothing: 0.7,
+  engage: 0.45,
 })
 
 const wrapper = ref<HTMLElement | null>(null)
@@ -49,54 +71,173 @@ onMounted(() => {
   const node = wrapper.value
   const target = card.value
 
-  const rotX = gsap.quickTo(target, 'rotationX', { duration: 0.5, ease: 'power3.out' })
-  const rotY = gsap.quickTo(target, 'rotationY', { duration: 0.5, ease: 'power3.out' })
-  const zTo = gsap.quickTo(target, 'z', { duration: 0.5, ease: 'power3.out' })
+  // Pre-compiled setters, created ONCE and reused on every move. Each of these
+  // is a single tween whose target value gets retargeted — not a new tween per
+  // event. That distinction is the whole reason this stays smooth.
+  //
+  // EASE CHOICE MATTERS AS MUCH AS DURATION.
+  // `power3.out` is extremely front-loaded — it covers ~49% of the distance in
+  // the first 100ms, so the card snaps to full tilt the moment the pointer
+  // touches it and then crawls the remainder. That is what reads as "flicking".
+  // `power2.out` is far gentler off the mark (~21% in the same 100ms), which
+  // gives the card the sense of being pushed rather than yanked.
+  const follow = { duration: props.smoothing, ease: 'power2.out' }
+  const rotX = gsap.quickTo(target, 'rotationX', follow)
+  const rotY = gsap.quickTo(target, 'rotationY', follow)
+  // The lift is a single 0 -> `lift` move on entry, so it gets a touch longer
+  // still; a fast Z pop is the most noticeable part of an abrupt entrance.
+  const zTo = gsap.quickTo(target, 'z', {
+    duration: props.smoothing * 1.2,
+    ease: 'power2.out',
+  })
+  const glareFade = glareEl.value
+    ? gsap.quickTo(glareEl.value, 'opacity', { duration: 0.5, ease: 'power2.out' })
+    : null
+
+  /**
+   * The return-to-flat tween, held so `onMove` can cancel it.
+   *
+   * WHY THIS IS NECESSARY: GSAP's default `overwrite` is `false`, so two tweens
+   * touching the same property both keep writing to it every frame and the
+   * result is whichever wrote last. Leaving the card starts a 1.1s elastic
+   * tween on rotationX/Y/z; sweep the pointer back in before it finishes and it
+   * is still running, fighting the quickTo setters above. The card then looks
+   * frozen or jittery — and the faster you move, the more often you land inside
+   * that 1.1s window. Killing it explicitly hands control cleanly back to the
+   * pointer.
+   */
+  let leaveTween: gsap.core.Tween | null = null
+
+  /**
+   * ENGAGEMENT — the fix for "I brushed the card and it lurched".
+   *
+   * THE FLAW THIS SOLVES
+   * Tilt strength is a function of pointer POSITION, and it peaks at the card's
+   * edges (px = ±0.5). So the lightest possible contact — clipping an edge or a
+   * corner on the way somewhere else — is precisely the input that commands
+   * maximum tilt, on both axes at once. Speed tuning cannot fix that; the card
+   * was being *told* to slam over.
+   *
+   * THE FIX
+   * Multiply the whole effect by a strength value that ramps 0 -> 1 over
+   * `engage` seconds after the pointer arrives. Now the card responds to
+   * INTENT rather than mere contact:
+   *   - a ~150ms accidental graze only ever reaches ~35% strength — a slight
+   *     stir, not a lurch
+   *   - a deliberate hover passes 0.45s and reaches the full effect
+   * Leaving resets it to 0, so every fresh approach ramps again.
+   */
+  const engage = { v: 0 }
+  /** Last known pointer position, in the -0.5..0.5 unit range. */
+  let lastPx = 0
+  let lastPy = 0
+  let pointerInside = false
+
+  /**
+   * Push the current pointer position and engagement strength to the card.
+   * Called both on mousemove AND from the ramp tween's onUpdate — the latter
+   * matters because if you enter and hold perfectly still, no further
+   * mousemove fires and the card would otherwise freeze at partial strength.
+   */
+  const applyTilt = () => {
+    const s = engage.v
+    rotY(lastPx * props.max * 2 * s)
+    rotX(-lastPy * props.max * 2 * s) // note the minus — see the comment above
+    zTo(props.lift * s)
+    glareFade?.(0.5 * s)
+  }
+
+  const onEnter = () => {
+    if (pointerInside) return
+    pointerInside = true
+    // Take back control from the return animation, if one is still playing.
+    leaveTween?.kill()
+    leaveTween = null
+    gsap.killTweensOf(engage)
+    gsap.to(engage, {
+      v: 1,
+      duration: props.engage,
+      // `inOut`, NOT `out`. This ramp needs the opposite shape to the follow
+      // tween: slow to commit at the start, so a brief graze accumulates almost
+      // no strength, then catching up smoothly for a real hover. An `out` ease
+      // here is front-loaded and reaches ~53% within 100ms, which defeats the
+      // whole point. With inOut a 150ms brush reaches only ~22%.
+      ease: 'power2.inOut',
+      onUpdate: applyTilt,
+    })
+  }
 
   const onMove = (e: MouseEvent) => {
+    // Safety net: if mouseenter was missed (it can be, when an element is
+    // inserted under a stationary cursor), start the ramp from here.
+    if (!pointerInside) onEnter()
+
     const rect = node.getBoundingClientRect()
     // Normalise the pointer to -0.5 .. +0.5 across the card. Working in a
     // unit range keeps the maths independent of the card's actual size.
-    const px = (e.clientX - rect.left) / rect.width - 0.5
-    const py = (e.clientY - rect.top) / rect.height - 0.5
+    lastPx = (e.clientX - rect.left) / rect.width - 0.5
+    lastPy = (e.clientY - rect.top) / rect.height - 0.5
 
-    rotY(px * props.max * 2)
-    rotX(-py * props.max * 2) // note the minus — see the comment above
-    zTo(props.lift)
+    applyTilt()
 
-    // Move the glare to the opposite side of the tilt, like a real reflection
-    // sliding across a glossy surface.
+    // Move the glare to follow the pointer, like a reflection sliding across a
+    // glossy surface.
+    //
+    // The two positions are written STRAIGHT to the element rather than tweened.
+    // A `gsap.to()` here would allocate a fresh tween on every mousemove —
+    // around 60 a second, each living 0.4s, so ~24 of them stacked on one
+    // element all animating the same two properties. That pile-up is what made
+    // this card stop responding when the pointer moved quickly. The position
+    // needs no easing anyway: the card's own tilt is already eased, so the
+    // highlight tracking the cursor exactly reads as correct. (Its opacity IS
+    // eased, and scales with engagement, inside `applyTilt`.)
     if (props.glare && glareEl.value) {
-      gsap.to(glareEl.value, {
-        opacity: 0.5,
-        // Convert the -0.5..0.5 range into a 0%..100% background position.
-        '--glare-x': `${(px + 0.5) * 100}%`,
-        '--glare-y': `${(py + 0.5) * 100}%`,
-        duration: 0.4,
-        ease: 'power2.out',
-      })
+      const style = glareEl.value.style
+      // Convert the -0.5..0.5 range into a 0%..100% gradient position.
+      style.setProperty('--glare-x', `${(lastPx + 0.5) * 100}%`)
+      style.setProperty('--glare-y', `${(lastPy + 0.5) * 100}%`)
     }
   }
 
   const onLeave = () => {
+    pointerInside = false
+    // Reset engagement so the NEXT approach has to earn full strength again.
+    // Without this, a graze followed by a second graze would start at full tilt.
+    gsap.killTweensOf(engage)
+    engage.v = 0
+
     // Return to flat. A slight elastic makes it feel like a physical object
     // settling rather than a value being reset.
-    gsap.to(target, {
+    leaveTween = gsap.to(target, {
       rotationX: 0,
       rotationY: 0,
       z: 0,
-      duration: 1.1,
-      ease: 'elastic.out(1, 0.5)',
+      duration: 1.2,
+      // elastic.out(amplitude, period). RAISING the period softens it: 0.5
+      // gives several visible bounces, 0.7 settles in roughly one gentle
+      // overshoot. With the gentler entry above, the old springier value read
+      // as inconsistent — the card arrived calmly and then boinged on the way out.
+      ease: 'elastic.out(1, 0.7)',
+      // Clear the reference once it finishes so `onMove` never kills a tween
+      // that has already completed.
+      onComplete: () => {
+        leaveTween = null
+      },
     })
-    if (glareEl.value) gsap.to(glareEl.value, { opacity: 0, duration: 0.5 })
+    // Reuses the same quickTo as the hover state, so fading out can never end
+    // up fighting a fade-in.
+    glareFade?.(0)
   }
 
+  node.addEventListener('mouseenter', onEnter)
   node.addEventListener('mousemove', onMove)
   node.addEventListener('mouseleave', onLeave)
 
   onUnmounted(() => {
+    node.removeEventListener('mouseenter', onEnter)
     node.removeEventListener('mousemove', onMove)
     node.removeEventListener('mouseleave', onLeave)
+    gsap.killTweensOf(engage)
     gsap.killTweensOf([target, glareEl.value].filter(Boolean) as HTMLElement[])
   })
 })
