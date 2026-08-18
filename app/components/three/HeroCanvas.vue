@@ -160,8 +160,10 @@ const palette = computed(() =>
  * Declared out here the reference never changes, so the watcher stays quiet.
  */
 const ringImages = [
-  '/images/IMG_0735.JPG',
-  '/images/kamisato-ayaka-5k-3840x2160-23010.jpg',
+  '/images/profile.jpeg',
+  '/images/ring1.JPG',
+  '/images/ring2.jpg',
+  '/images/ring3.jpeg',
 ]
 </script>
 

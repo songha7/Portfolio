@@ -40,8 +40,8 @@ export const profile = {
   email: 'sanghakh122333@gmail.com',
   /** Numbers in the hero strip. `suffix` is appended after the counter. */
   stats: [
-    { value: 5, suffix: '+', label: 'Years building' },
-    { value: 30, suffix: '+', label: 'Projects shipped' },
+    { value: 6, suffix: '', label: 'Months building' },
+    { value: 3, suffix: '', label: 'Projects shipped' },
     { value: 12, suffix: '', label: 'Tech in daily use' },
     { value: 60, suffix: 'fps', label: 'Non-negotiable' },
   ],
