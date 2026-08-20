@@ -205,43 +205,45 @@ export const projects: Project[] = [
 export const skillGroups: SkillGroup[] = [
   {
     title: 'Front-end',
-    summary: 'Where I spend most of my time. Component design, state, and motion.',
+    summary: 'Where I spend most of my time. Components, state, and motion.',
     items: [
-      { name: 'Vue 3 / Nuxt 4', level: 95 },
-      { name: 'TypeScript', level: 88 },
-      { name: 'Tailwind CSS', level: 92 },
-      { name: 'GSAP / Motion', level: 85 },
-      { name: 'Three.js / GLSL', level: 74 },
+      { name: 'Vue 3 / Nuxt', level: 55 },
+      { name: 'Tailwind CSS', level: 75 },
+      { name: 'TypeScript', level: 40 },
+      { name: 'Pinia / shadcn-vue', level: 45 },
+      { name: 'GSAP / Lenis', level: 10 },
     ],
   },
   {
     title: 'Back-end',
-    summary: 'Typed endpoints, sensible data models, auth that does not leak.',
+    summary: 'Enough to build the other half of my own projects.',
     items: [
-      { name: 'Nitro / Node', level: 84 },
-      { name: 'Supabase / Postgres', level: 80 },
-      { name: 'REST & API design', level: 86 },
-      { name: 'Auth (Clerk, JWT)', level: 78 },
+      { name: 'Nitro server routes', level: 40 },
+      { name: 'Postgres', level: 40 },
+      { name: 'Supabase / Neon', level: 35 },
+      { name: 'Prisma', level: 30 },
+      { name: 'Auth (Clerk)', level: 35 },
     ],
   },
   {
-    title: 'Vision & Python',
-    summary: 'Getting a camera to understand a scene before the next frame arrives.',
+    title: 'Tooling',
+    summary: 'How the work gets from my machine to a URL.',
     items: [
-      { name: 'Python', level: 82 },
-      { name: 'OpenCV', level: 80 },
-      { name: 'MediaPipe', level: 76 },
-      { name: 'NumPy', level: 74 },
+      { name: 'Git / GitHub', level: 50 },
+      { name: 'Vercel', level: 45 },
+      { name: 'VS Code', level: 68 },
+      { name: 'Vite', level: 30 },
+      {name: 'macOS / terminal', level: 40 },
     ],
   },
   {
-    title: 'Craft',
-    summary: 'The parts nobody lists but everybody notices.',
+    title: 'Learning',
+    summary: 'Coursework and things I am working through right now.',
     items: [
-      { name: 'Interaction design', level: 88 },
-      { name: 'Accessibility', level: 80 },
-      { name: 'Performance', level: 85 },
-      { name: 'i18n', level: 82 },
+      { name: 'Python', level: 35 },
+      { name: 'OpenCV / MediaPipe', level: 20 },
+      { name: 'NumPy', level: 20 },
+      { name: 'Three.js / TresJS', level: 15 },
     ],
   },
 ]
@@ -249,8 +251,8 @@ export const skillGroups: SkillGroup[] = [
 /** The endless ticker rows in the skills section. */
 export const marqueeRows = [
   ['Nuxt', 'Vue', 'TypeScript', 'Tailwind', 'Vite', 'Pinia', 'Nitro', 'shadcn'],
-  ['Three.js', 'GLSL', 'GSAP', 'Lenis', 'WebGL', 'Canvas', 'SVG', 'Motion'],
-  ['Python', 'OpenCV', 'MediaPipe', 'NumPy', 'Supabase', 'Postgres', 'Clerk', 'Git'],
+  ['Postgres', 'Supabase', 'Neon', 'Prisma', 'Clerk', 'REST', 'Git', 'Vercel'],
+  ['Python', 'OpenCV', 'MediaPipe', 'NumPy', 'GSAP', 'Lenis', 'Three.js', 'Figma'],
 ]
 
 /* -------------------------------------------------------------- experience */

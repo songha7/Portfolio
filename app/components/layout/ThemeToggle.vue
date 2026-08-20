@@ -19,6 +19,34 @@ import { Moon, Sun } from '@lucide/vue'
  *
  * The radius must reach the furthest corner or the wipe stops short — hence
  * the hypotenuse calculation.
+ *
+ * SAFARI VS CHROME
+ * Safari did not ship `startViewTransition` until very recently, so there it
+ * just takes the `!doc.startViewTransition` branch below and swaps the theme
+ * instantly — no animation, no way for this code path to misbehave. Chrome
+ * *does* run it, which is the only place either of the bugs below could show.
+ *
+ * TWO CHROME-ONLY BUGS THIS VERSION FIXES:
+ *
+ * 1. Origin drifting away from the button. The old code anchored the circle
+ *    on `event.clientX/clientY` — the raw pointer position. A `click` fired by
+ *    keyboard activation (Tab, then Enter/Space) or by anything else that
+ *    dispatches a synthetic click carries `clientX/clientY` that do NOT
+ *    describe the button (Chrome and Safari do not even agree with each other
+ *    on what those coordinates should be for a non-pointer click). Anchoring
+ *    on the button's own `getBoundingClientRect()` center instead sidesteps
+ *    the question entirely — the wipe now always starts at the button, no
+ *    matter how it was activated.
+ *
+ * 2. A frozen full-screen circle. `transition.ready` rejects if the browser
+ *    can't settle on captured "old"/"new" snapshots (this page has a lot of
+ *    live layout underneath: GSAP ScrollTrigger, Lenis, a WebGL canvas
+ *    recolouring itself for the new theme). The old code let that rejection
+ *    propagate as an unhandled promise rejection and simply never called
+ *    `.animate()` — leaving the view-transition pseudo-element tree stuck on
+ *    screen with no exit animation to end it. The try/catch below falls back
+ *    to an instant swap on any failure, the same way the no-support branch
+ *    does, so there is never a stuck snapshot.
  */
 
 const colorMode = useColorMode()
@@ -32,7 +60,10 @@ async function toggle(event: MouseEvent) {
   // TypeScript's DOM types do not include this API yet, so we feature-detect
   // through a cast rather than assuming it exists.
   const doc = document as Document & {
-    startViewTransition?: (cb: () => Promise<void> | void) => { ready: Promise<void> }
+    startViewTransition?: (cb: () => Promise<void> | void) => {
+      ready: Promise<void>
+      finished: Promise<void>
+    }
   }
 
   // No support, or the visitor asked for less motion: just switch instantly.
@@ -41,9 +72,13 @@ async function toggle(event: MouseEvent) {
     return
   }
 
-  const x = event.clientX
-  const y = event.clientY
-  // Distance from the click to the furthest corner of the screen.
+  // Anchor on the button itself, not the raw pointer position — see "Chrome
+  // bug 1" above. `currentTarget` is the element the listener is bound to
+  // (the button), not whatever happened to be under the pointer.
+  const anchor = (event.currentTarget as HTMLElement | null)?.getBoundingClientRect()
+  const x = anchor ? anchor.left + anchor.width / 2 : event.clientX
+  const y = anchor ? anchor.top + anchor.height / 2 : event.clientY
+  // Distance from the anchor to the furthest corner of the screen.
   const endRadius = Math.hypot(
     Math.max(x, window.innerWidth - x),
     Math.max(y, window.innerHeight - y),
@@ -55,18 +90,25 @@ async function toggle(event: MouseEvent) {
     await nextTick()
   })
 
-  await transition.ready
+  try {
+    await transition.ready
 
-  document.documentElement.animate(
-    {
-      clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`],
-    },
-    {
-      duration: 620,
-      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-      pseudoElement: '::view-transition-new(root)',
-    },
-  )
+    document.documentElement.animate(
+      {
+        clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`],
+      },
+      {
+        duration: 620,
+        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        pseudoElement: '::view-transition-new(root)',
+      },
+    )
+  } catch {
+    // The browser could not settle on a snapshot to animate (see "Chrome bug
+    // 2" above). The theme class was already flipped inside the callback, so
+    // there is nothing left to do — just let the transition finish tearing
+    // itself down instead of leaving a half-set-up animation behind.
+  }
 }
 </script>
 
