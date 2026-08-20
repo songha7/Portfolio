@@ -243,7 +243,7 @@ onUnmounted(() => introCtx?.revert())
       </div>
 
       <!-- Stats strip -->
-      <dl class="border-border/60 mt-12 grid max-w-3xl grid-cols-2 gap-y-6 border-t pt-6 sm:grid-cols-4">
+      <dl class="border-border/60 mt-12 grid max-w-4xl grid-cols-2 gap-y-6 border-t pt-6 sm:grid-cols-4">
         <div v-for="stat in profile.stats" :key="stat.label" class="hero-anim hero-stat">
           <dt class="sr-only">{{ stat.label }}</dt>
           <dd>

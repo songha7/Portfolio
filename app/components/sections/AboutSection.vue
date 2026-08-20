@@ -20,9 +20,10 @@ const reduced = useReducedMotion()
 
 /** The three short statements beside the portrait. */
 const principles = [
-  { title: 'Ship it', body: 'A working thing today beats a perfect thing next quarter.' },
-  { title: 'Feel the frame', body: 'If it drops below 60fps, it is a bug, not a trade-off.' },
-  { title: 'Leave notes', body: 'Code is read far more often than it is written.' },
+  { title: 'Ship it', body: 'A working thing today beats a perfect thing I never finish.' },
+  { title: 'Feel the frame', body: 'If it stutters on a cheap phone, it is not done.' },
+  { title: 'Ask early', body: 'Two hours stuck alone is worse than one question.'},
+  { title: 'Leave notes', body: 'Nobody clears the dungeon twice without a map.' },
 ]
 
 useGsapContext(root, () => {
@@ -63,7 +64,7 @@ useGsapContext(root, () => {
     <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <SectionHeading
         index="01"
-        label="About"
+        label="About me"
         title="Engineer by trade,"
         accent="obsessive by habit."
       />

@@ -31,25 +31,24 @@ export const profile = {
   tagline: 'I build interfaces that feel alive.',
   /** Two or three sentences for the About section. */
   bio: [
-    'I am a full-stack engineer who lives in the space between product and craft. Most days that means Nuxt and Vue on the front, a typed API underneath, and an unreasonable amount of attention paid to how a transition eases.',
-    'The other half of my work is computer vision — real-time hand tracking, identity verification, anything where a camera has to understand what it is looking at before the frame is gone.',
-    'I care about the small things: a loading state that respects your time, a layout that survives a 320px phone, motion that means something instead of just moving.',
+  'I am a computer science student at the Institute of Technology of Cambodia, currently focused on front-end development. Most of my time goes into Nuxt and Vue — building interfaces, then rebuilding them once I understand why the first version was wrong.',
+  'I am doing an internship at an eKYC company, where I am being trained in front-end and the basics of full-stack work. Outside of that I am building Sroknh, a room-rental platform, with two teammates — Nuxt on the front, Postgres and Clerk behind it, shipped to production rather than left in a folder.',
+  'I care about the small things: a loading state that respects your time, a layout that survives a 320px phone, motion that means something instead of just moving. I still have a lot to learn, and I would rather learn it on a real team than alone.',
   ],
   location: 'Remote · UTC+7',
   availability: 'Open to new work',
   email: 'sanghakh122333@gmail.com',
   /** Numbers in the hero strip. `suffix` is appended after the counter. */
   stats: [
-    { value: 6, suffix: '', label: 'Months building' },
-    { value: 3, suffix: '', label: 'Projects shipped' },
-    { value: 12, suffix: '', label: 'Tech in daily use' },
-    { value: 60, suffix: 'fps', label: 'Non-negotiable' },
+    { value: 3, suffix: '', label: 'Months learning' },
+    { value: 7, suffix: '', label: 'Days a week learning' },
+    { value: 2, suffix: '', label: 'Hours coding after class' },
+    { value: 100, suffix: '%', label: 'Self-taught so far' },
   ],
 }
 
 export const socials: SocialLink[] = [
   { label: 'GitHub', href: 'https://github.com/songha7', handle: '@songha7' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/', handle: '/in/asuna' },
   { label: 'Email', href: `mailto:${profile.email}`, handle: profile.email },
 ]
 
