@@ -103,7 +103,7 @@ async function onSubmit() {
       style="background: radial-gradient(ellipse 70% 100% at 50% 100%, color-mix(in oklch, var(--brand) 10%, transparent), transparent 70%)"
     />
 
-    <div class="relative mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="relative mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <div class="grid gap-16 lg:grid-cols-12 lg:gap-20">
         <!-- ------------------------------------------------------- pitch -->
         <div class="lg:col-span-5">
@@ -161,7 +161,7 @@ async function onSubmit() {
                    input they find, so a non-empty value here is a near-certain
                    spam signal. `tabindex="-1"` and `aria-hidden` keep it away
                    from keyboard and screen-reader users. -->
-              <div class="absolute -left-[9999px]" aria-hidden="true">
+              <div class="absolute left-[-9999px]" aria-hidden="true">
                 <label for="company">Company (leave blank)</label>
                 <input
                   id="company"

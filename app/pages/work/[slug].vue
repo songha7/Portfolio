@@ -72,7 +72,7 @@ const linkIcons: Record<string, Component> = {
       />
       <div class="bg-grid mask-radial-fade absolute inset-0 opacity-40" aria-hidden="true" />
 
-      <div class="relative mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+      <div class="relative mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
         <NuxtLink
           to="/work"
           class="text-muted-foreground hover:text-brand group mb-10 inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.2em] uppercase transition-colors"
@@ -128,7 +128,7 @@ const linkIcons: Record<string, Component> = {
       v-if="project.metrics?.length"
       class="border-border/60 border-y"
     >
-      <dl class="mx-auto grid max-w-[1400px] grid-cols-2 divide-x divide-border/60 px-5 sm:grid-cols-3 sm:px-8 lg:px-12">
+      <dl class="mx-auto grid max-w-350 grid-cols-2 divide-x divide-border/60 px-5 sm:grid-cols-3 sm:px-8 lg:px-12">
         <div v-for="metric in project.metrics" :key="metric.label" class="px-6 py-8 first:pl-0">
           <dt class="text-muted-foreground font-mono text-[10px] tracking-[0.2em] uppercase">
             {{ metric.label }}
@@ -141,7 +141,7 @@ const linkIcons: Record<string, Component> = {
     </section>
 
     <!-- ------------------------------------------------------------ body -->
-    <div class="mx-auto max-w-[1400px] px-5 py-20 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 py-20 sm:px-8 lg:px-12">
       <div class="grid gap-16 lg:grid-cols-12 lg:gap-20">
         <!-- Sticky meta rail. `top-28` clears the fixed header. -->
         <aside class="lg:col-span-4">
@@ -203,7 +203,7 @@ const linkIcons: Record<string, Component> = {
 
     <!-- ------------------------------------------------------ prev / next -->
     <nav
-      class="border-border/60 mx-auto grid max-w-[1400px] gap-px border-t px-5 sm:px-8 md:grid-cols-2 lg:px-12"
+      class="border-border/60 mx-auto grid max-w-350 gap-px border-t px-5 sm:px-8 md:grid-cols-2 lg:px-12"
       aria-label="Project navigation"
     >
       <NuxtLink

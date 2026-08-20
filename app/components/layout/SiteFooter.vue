@@ -26,14 +26,14 @@ onMounted(() => {
          this is a reliable way to make a footer feel designed rather than
          left over. `select-none` stops it hijacking text selection. -->
     <div class="pointer-events-none absolute inset-x-0 bottom-0 overflow-hidden select-none" aria-hidden="true">
-      <p class="text-foreground/[0.04] translate-y-[22%] text-center font-serif text-[clamp(5rem,22vw,20rem)] leading-none tracking-tighter">
+      <p class="text-foreground/4 translate-y-[22%] text-center font-serif text-[clamp(5rem,22vw,20rem)] leading-none tracking-tighter">
         {{ profile.name }}
       </p>
     </div>
 
     <!-- gutter + pb-safe: notch-aware sides, and the last thing on the page
          clears the home indicator instead of tucking under it. -->
-    <div class="gutter pb-safe relative mx-auto max-w-[1400px] pt-16" style="--pb-safe: 4rem">
+    <div class="gutter pb-safe relative mx-auto max-w-350 pt-16" style="--pb-safe: 4rem">
       <div class="flex flex-col gap-12 md:flex-row md:justify-between">
         <!-- Left: availability + email -->
         <div class="max-w-sm">
@@ -50,7 +50,7 @@ onMounted(() => {
             class="group block font-serif text-3xl tracking-tight break-all sm:text-4xl"
             data-cursor-label="Email"
           >
-            <span class="bg-brand/70 bg-[length:0%_1px] bg-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_1px]">
+            <span class="bg-brand/70 bg-size-[0%_1px] bg-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-size-[100%_1px]">
               {{ profile.email }}
             </span>
           </a>

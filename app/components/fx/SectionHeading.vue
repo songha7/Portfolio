@@ -50,7 +50,7 @@ withDefaults(defineProps<Props>(), {
          See the fuller note on the h1 in HeroSection.vue. -->
     <h2 class="font-serif text-[clamp(2.2rem,6vw,4.5rem)] leading-[1.08] tracking-[-0.005em] sm:leading-[0.95] sm:tracking-[-0.02em]">
       {{ title }}
-      <em v-if="accent" class="text-gradient not-italic italic">{{ accent }}</em>
+      <em v-if="accent" class="text-gradient italic">{{ accent }}</em>
     </h2>
 
     <p

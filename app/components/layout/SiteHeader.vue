@@ -86,7 +86,7 @@ watch(() => useRoute().fullPath, () => (mobileOpen.value = false))
            also clears the notch when an iPhone is held in landscape, where the
            camera housing overlaps one end of the bar. -->
       <nav
-        class="gutter mx-auto flex h-16 max-w-[1400px] items-center justify-between"
+        class="gutter mx-auto flex h-16 max-w-350 items-center justify-between"
         aria-label="Main"
       >
         <!-- ---------------------------------------------------------- logo -->

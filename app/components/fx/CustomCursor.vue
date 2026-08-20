@@ -109,7 +109,7 @@ onUnmounted(() => cleanup?.())
   <div
     v-if="canHover"
     aria-hidden="true"
-    class="pointer-events-none fixed inset-0 z-[90] hidden md:block"
+    class="pointer-events-none fixed inset-0 z-90 hidden md:block"
     :class="isVisible ? 'opacity-100' : 'opacity-0'"
     style="transition: opacity 0.25s"
   >

@@ -53,7 +53,7 @@ useGsapContext(root, () => {
 
 <template>
   <section ref="root" class="relative py-28 sm:py-36">
-    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <SectionHeading
         index="05"
         label="Trajectory"
@@ -65,12 +65,12 @@ useGsapContext(root, () => {
         <!-- The static track. `aria-hidden` because the list itself already
              conveys the sequence to a screen reader. -->
         <div
-          class="bg-border absolute top-2 bottom-2 left-[7px] w-px sm:left-[calc(9rem+7px)]"
+          class="bg-border absolute top-2 bottom-2 left-1.75 w-px sm:left-37.75"
           aria-hidden="true"
         />
         <!-- The drawing progress line, sitting exactly on top of the track. -->
         <div
-          class="timeline-progress absolute top-2 bottom-2 left-[7px] w-px origin-top scale-y-0 sm:left-[calc(9rem+7px)]"
+          class="timeline-progress absolute top-2 bottom-2 left-1.75 w-px origin-top scale-y-0 sm:left-37.75"
           style="background: linear-gradient(to bottom, var(--brand), var(--brand-deep))"
           aria-hidden="true"
         />
@@ -87,7 +87,7 @@ useGsapContext(root, () => {
 
           <!-- The dot, centred on the line. -->
           <div
-            class="border-background bg-brand absolute top-1.5 left-0 size-[15px] rounded-full border-4 sm:left-[9rem]"
+            class="border-background bg-brand absolute top-1.5 left-0 size-3.75 rounded-full border-4 sm:left-36"
             aria-hidden="true"
           >
             <div class="timeline-dot bg-brand size-full rounded-full" />

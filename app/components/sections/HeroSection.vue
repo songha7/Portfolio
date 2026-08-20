@@ -99,7 +99,7 @@ onUnmounted(() => introCtx?.revert())
   <section
     id="hero"
     ref="root"
-    class="relative flex min-h-[100svh] items-center overflow-hidden"
+    class="relative flex min-h-svh items-center overflow-hidden"
   >
     <!-- ------------------------------------------------------ 3D backdrop -->
     <!--
@@ -177,7 +177,7 @@ onUnmounted(() => introCtx?.revert())
     <!-- pt clears the fixed header; pb leaves room for the scroll hint.
          Keeping the total under 100svh on a laptop is the whole reason the
          type scale above caps where it does. -->
-    <div class="hero-parallax relative mx-auto w-full max-w-[1400px] px-5 pt-24 pb-20 sm:px-8 lg:px-12">
+    <div class="hero-parallax relative mx-auto w-full max-w-350 px-5 pt-24 pb-20 sm:px-8 lg:px-12">
       <!-- Eyebrow -->
       <div class="hero-anim hero-eyebrow mb-8 flex flex-wrap items-center gap-3">
         <Badge variant="live">
@@ -266,7 +266,7 @@ onUnmounted(() => introCtx?.revert())
       @click="scrollTo('#work', { offset: -60 })"
     >
       <span class="font-mono text-[10px] tracking-[0.3em] uppercase">Scroll</span>
-      <ArrowDown class="size-3.5 animate-[scroll-hint_2s_var(--ease-out-expo)_infinite]" />
+      <ArrowDown class="size-3.5 animate-scroll-hint" />
     </button>
   </section>
 </template>

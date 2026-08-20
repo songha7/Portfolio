@@ -113,7 +113,7 @@ onUnmounted(() => mm?.revert())
     :class="reduced ? '' : ''"
   >
     <!-- Heading sits above the track and stays put while the cards slide by. -->
-    <div class="mx-auto max-w-[1400px] px-5 pt-24 sm:px-8 lg:px-12 md:pt-28">
+    <div class="mx-auto max-w-350 px-5 pt-24 sm:px-8 lg:px-12 md:pt-28">
       <div class="work-heading">
         <SectionHeading
           index="03"
@@ -160,7 +160,7 @@ onUnmounted(() => mm?.revert())
             />
 
             <!-- Visual panel -->
-            <div class="relative aspect-[16/10] overflow-hidden">
+            <div class="relative aspect-16/10 overflow-hidden">
               <div
                 class="absolute inset-0 transition-transform duration-[1.2s] group-hover:scale-105"
                 :style="{
@@ -217,7 +217,7 @@ onUnmounted(() => mm?.revert())
 
       <!-- Closing panel: a call to action at the end of the horizontal run, so
            the section resolves rather than just stopping. -->
-      <article class="work-card flex md:w-[24rem] md:shrink-0">
+      <article class="work-card flex md:w-96 md:shrink-0">
         <NuxtLink
           to="/work"
           class="group border-border/70 hover:border-brand/50 flex w-full flex-col items-start justify-end rounded-3xl border border-dashed p-8 transition-colors"

@@ -80,7 +80,7 @@ onMounted(() => {
 
 <template>
   <section id="skills" ref="root" class="relative overflow-hidden py-28 sm:py-36">
-    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <SectionHeading
         index="02"
         label="Capabilities"
@@ -93,7 +93,7 @@ onMounted(() => {
     <!-- --------------------------------------------------- the skewed band -->
     <div
       ref="band"
-      class="border-border/60 relative my-20 w-[120%] -ml-[10%] border-y py-8 will-change-transform sm:my-24"
+      class="border-border/60 relative my-20 w-[120%] ml-[-10%] border-y py-8 will-change-transform sm:my-24"
       style="transform: rotate(-4deg)"
       aria-hidden="true"
     >
@@ -124,7 +124,7 @@ onMounted(() => {
     </ul>
 
     <!-- ------------------------------------------------------ skill groups -->
-    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <div class="skill-grid grid gap-x-12 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
         <div v-for="group in skillGroups" :key="group.title">
           <RevealOnScroll direction="up">

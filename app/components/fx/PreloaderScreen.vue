@@ -165,7 +165,7 @@ const displayValue = computed(() => String(Math.round(progress.value)).padStart(
   <div
     v-if="visible"
     ref="root"
-    class="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
+    class="fixed inset-0 z-100 flex items-center justify-center overflow-hidden"
     role="status"
     aria-live="polite"
     :aria-label="`Loading, ${displayValue} percent`"

@@ -28,7 +28,7 @@ useSeoMeta({ title: 'Page not found', robots: 'noindex' })
       style="background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in oklch, var(--brand) 10%, transparent), transparent 70%)"
     />
 
-    <div class="gutter relative mx-auto w-full max-w-[1400px]">
+    <div class="gutter relative mx-auto w-full max-w-350">
       <p class="text-brand font-mono text-[11px] tracking-[0.3em] uppercase">
         Error {{ error?.statusCode ?? 500 }}
       </p>
@@ -38,7 +38,7 @@ useSeoMeta({ title: 'Page not found', robots: 'noindex' })
            the one that suffers most at phone sizes. -->
       <h1 class="mt-6 font-serif text-[clamp(3rem,12vw,9rem)] leading-none tracking-[-0.015em] sm:leading-[0.85] sm:tracking-[-0.04em]">
         Nothing<br >
-        <em class="text-gradient not-italic italic">here.</em>
+        <em class="text-gradient italic">here.</em>
       </h1>
 
       <p class="text-muted-foreground mt-8 max-w-md leading-relaxed">

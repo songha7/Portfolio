@@ -93,7 +93,7 @@ const cameraPosition = new THREE.Vector3(0, 0, 4.6)
 
 <template>
   <div class="pt-28 pb-24 sm:pt-32">
-    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <SectionHeading
         index="Lab"
         label="Playground"
@@ -105,7 +105,7 @@ const cameraPosition = new THREE.Vector3(0, 0, 4.6)
       <!-- ------------------------------------------------- the live canvas -->
       <div class="mt-12 grid gap-8 lg:mt-16 lg:grid-cols-12">
         <div class="lg:col-span-7">
-          <div class="border-border/70 relative aspect-square overflow-hidden rounded-3xl border sm:aspect-[4/3]">
+          <div class="border-border/70 relative aspect-square overflow-hidden rounded-3xl border sm:aspect-4/3">
             <div
               class="absolute inset-0"
               style="background: radial-gradient(circle at 50% 45%, color-mix(in oklch, var(--brand) 7%, transparent), transparent 70%), var(--card)"

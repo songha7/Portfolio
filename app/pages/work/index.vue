@@ -38,7 +38,7 @@ const filtered = computed(() =>
 
 <template>
   <div class="pt-28 pb-24 sm:pt-32">
-    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <SectionHeading
         index="Archive"
         label="All work"
@@ -100,7 +100,7 @@ const filtered = computed(() =>
               class="group border-border/70 hover:border-brand/40 flex h-full flex-col overflow-hidden rounded-2xl border transition-colors"
               :data-cursor-label="project.title"
             >
-              <div class="relative aspect-[16/10] overflow-hidden">
+              <div class="relative aspect-16/10 overflow-hidden">
                 <div
                   class="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
                   :style="{

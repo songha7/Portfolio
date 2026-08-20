@@ -12,7 +12,7 @@ const { progress } = useScrollProgress()
 
 <template>
   <div
-    class="pointer-events-none fixed inset-x-0 top-0 z-[70] h-px"
+    class="pointer-events-none fixed inset-x-0 top-0 z-70 h-px"
     role="progressbar"
     aria-label="Page scroll progress"
     :aria-valuenow="Math.round(progress * 100)"
