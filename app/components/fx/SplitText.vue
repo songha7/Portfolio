@@ -68,7 +68,7 @@ const words = computed(() =>
             ? // The negative margin cancels the padding, so the extra room for
               // descenders (g, y, p) costs no layout height. Without it,
               // overflow-hidden slices the tail off every 'g'.
-              'overflow-hidden pb-[0.14em] -mb-[0.14em]'
+              'overflow-hidden pb-[0.14em] mb-[-0.14em]'
             : ''
         "
       >

@@ -60,7 +60,7 @@ useGsapContext(root, () => {
 
 <template>
   <section id="about" ref="root" class="relative py-28 sm:py-36 lg:py-44">
-    <div class="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+    <div class="mx-auto max-w-350 px-5 sm:px-8 lg:px-12">
       <SectionHeading
         index="01"
         label="About"
@@ -107,12 +107,12 @@ useGsapContext(root, () => {
         <div class="lg:col-span-5">
           <div class="flex gap-6">
             <!-- The drawing rule -->
-            <div class="about-rule bg-gradient-to-b from-brand via-brand/40 to-transparent hidden w-px shrink-0 sm:block" />
+            <div class="about-rule bg-linear-to-b from-brand via-brand/40 to-transparent hidden w-px shrink-0 sm:block" />
 
             <div class="flex-1">
               <!-- Portrait -->
               <TiltCard :max="7" :lift="18" radius="rounded-2xl" class="mb-10">
-                <div class="border-border/60 relative aspect-[4/5] overflow-hidden rounded-2xl border">
+                <div class="border-border/60 relative aspect-4/5 overflow-hidden rounded-2xl border">
                   <img
                     src="/images/profile.jpeg"
                     :alt="profile.name"
