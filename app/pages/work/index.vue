@@ -94,7 +94,7 @@ const filtered = computed(() =>
         move-class="transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
       >
         <article v-for="project in filtered" :key="project.slug">
-          <TiltCard :max="5" :lift="14" class="h-full">
+          <TiltCard :max="5" :lift="14" radius="rounded-2xl" class="h-full">
             <NuxtLink
               :to="`/work/${project.slug}`"
               class="group border-border/70 hover:border-brand/40 flex h-full flex-col overflow-hidden rounded-2xl border transition-colors"

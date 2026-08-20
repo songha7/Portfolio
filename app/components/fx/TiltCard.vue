@@ -46,6 +46,27 @@ interface Props {
    * the full effect. Set to 0 to react instantly to any contact.
    */
   engage?: number
+  /**
+   * Tailwind radius utility to clip the card to, e.g. `'rounded-2xl'`. Pass
+   * the SAME value the slotted content uses for its own rounded corners.
+   *
+   * WHY THIS IS A PROP RATHER THAN SOMETHING THE SLOT HANDLES ITSELF: the
+   * glare highlight below is a SIBLING of `<slot />`, not a child of it — it
+   * has to cover the whole card regardless of what markup the slot contains.
+   * That means it can never pick up a radius the slot's own content sets on
+   * itself; `border-radius: inherit` (the previous approach) only reaches a
+   * direct parent's computed value, and the direct parent here (`card`) had
+   * no radius of its own. The visible bug was a squared-off white glow
+   * poking past the photo's rounded corners right at the edge of a hover.
+   *
+   * Applying the SAME class to `card` and the glare guarantees pixel-perfect
+   * agreement, and it also fixes a second bug for free: rounding + clipping
+   * the element that directly receives the 3D rotation (rather than a nested
+   * child two levels down) sidesteps the Chrome/Safari quirk where
+   * `border-radius` + `overflow-hidden` stop being respected on a *child* of
+   * a live 3D-transformed ancestor — corners would square off mid-tilt.
+   */
+  radius?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +78,7 @@ const props = withDefaults(defineProps<Props>(), {
   // itself can stay reasonably responsive for a deliberate hover.
   smoothing: 0.7,
   engage: 0.45,
+  radius: '',
 })
 
 const wrapper = ref<HTMLElement | null>(null)
@@ -250,19 +272,21 @@ onMounted(() => {
   >
     <div
       ref="card"
-      class="relative h-full will-change-transform"
+      :class="['relative h-full overflow-hidden will-change-transform', radius]"
       style="transform-style: preserve-3d"
     >
       <slot />
 
       <!-- The specular highlight. A radial gradient whose centre is driven by
            two CSS custom properties that GSAP animates. `mix-blend-mode` makes
-           it brighten what is underneath rather than washing it out. -->
+           it brighten what is underneath rather than washing it out. Same
+           `radius` class as `card` above — see the prop comment for why this
+           can't just inherit it. -->
       <div
         v-if="glare"
         ref="glareEl"
         aria-hidden="true"
-        class="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 mix-blend-soft-light"
+        :class="['pointer-events-none absolute inset-0 opacity-0 mix-blend-soft-light', radius]"
         style="
           --glare-x: 50%;
           --glare-y: 50%;

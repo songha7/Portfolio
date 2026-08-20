@@ -143,7 +143,7 @@ onUnmounted(() => mm?.revert())
         :key="project.slug"
         class="work-card md:w-[min(78vw,30rem)] md:shrink-0"
       >
-        <TiltCard :max="6" :lift="20" class="h-full">
+        <TiltCard :max="6" :lift="20" radius="rounded-3xl" class="h-full">
           <NuxtLink
             :to="`/work/${project.slug}`"
             class="group border-border/70 bg-card/40 relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-colors duration-500 hover:border-transparent"

@@ -110,27 +110,25 @@ useGsapContext(root, () => {
             <div class="about-rule bg-gradient-to-b from-brand via-brand/40 to-transparent hidden w-px shrink-0 sm:block" />
 
             <div class="flex-1">
-              <!-- An abstract "portrait": a gradient mesh in a tilting card.
-                   Swap this for a real photo when you have one you like — the
-                   TiltCard wrapper will work exactly the same. -->
-              <TiltCard :max="7" :lift="18" class="mb-10">
+              <!-- Portrait -->
+              <TiltCard :max="7" :lift="18" radius="rounded-2xl" class="mb-10">
                 <div class="border-border/60 relative aspect-[4/5] overflow-hidden rounded-2xl border">
+                  <img
+                    src="/images/profile.jpeg"
+                    :alt="profile.name"
+                    class="absolute inset-0 size-full object-cover"
+                  />
+
+                  <!-- Scrim so the name plate stays legible over the photo -->
                   <div
                     class="absolute inset-0"
-                    style="
-                      background:
-                        radial-gradient(circle at 25% 20%, color-mix(in oklch, var(--brand-soft) 70%, transparent), transparent 55%),
-                        radial-gradient(circle at 75% 65%, color-mix(in oklch, var(--brand-rose) 55%, transparent), transparent 55%),
-                        radial-gradient(circle at 50% 100%, color-mix(in oklch, var(--brand-deep) 60%, transparent), transparent 60%),
-                        var(--card);
-                    "
+                    style="background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent 45%)"
                   />
-                  <div class="bg-grid absolute inset-0 opacity-40" />
 
                   <!-- Name plate -->
                   <div class="absolute inset-x-0 bottom-0 p-6">
-                    <p class="font-serif text-3xl tracking-tight">{{ profile.name }}</p>
-                    <p class="text-muted-foreground mt-1 font-mono text-[10px] tracking-[0.25em] uppercase">
+                    <p class="font-serif text-3xl tracking-tight text-white">{{ profile.name }}</p>
+                    <p class="mt-1 font-mono text-[10px] tracking-[0.25em] text-white/70 uppercase">
                       {{ profile.role }}
                     </p>
                   </div>
