@@ -27,26 +27,26 @@ const steps = [
   {
     n: '01',
     title: 'Understand',
-    body: 'Before a single component exists, I want to know who breaks without this and what they do today instead. Most bad software is a correct answer to the wrong question.',
-    detail: 'Discovery · Constraints · Success criteria',
+    body: 'First I work out what the thing actually needs to do. On Roomie, that meant deciding with my teammates what a listing is before writing any code.',
+    detail: 'Questions · Sketches · Data model',
   },
   {
     n: '02',
     title: 'Shape',
-    body: 'Wireframes in code, not in a design tool. A rough page in the browser tells you more in an hour about rhythm and density than a week of static mockups.',
-    detail: 'Prototype · Type scale · Motion language',
+    body: 'I build rough in the browser instead of designing first. A messy page teaches me more about spacing and layout in an hour than a blank Figma file does.',
+    detail: 'Layout · Components · Real content',
   },
   {
     n: '03',
     title: 'Build',
-    body: 'Typed end to end, componentised, accessible from the first commit rather than audited at the end. Server-render what can be, hydrate what must be.',
-    detail: 'Nuxt · TypeScript · Tests where they earn their keep',
+    body: 'Nuxt on the front, server routes and Postgres behind it. I add types as I go, because an API once returned a shape I did not expect and I lost a day to it.',
+    detail: 'Nuxt · TypeScript · Supabase',
   },
   {
     n: '04',
     title: 'Refine',
-    body: 'The last 10% is the part people feel: easing curves, empty states, the loading skeleton nobody was asked to design. This is where a project stops looking like a template.',
-    detail: 'Performance · Polish · Handover notes',
+    body: 'Then the slow part: loading states, empty states, testing on a real phone. I usually rewrite a component once I see why the first version was wrong.',
+    detail: 'Polish · Mobile · Rewrite',
   },
 ]
 
